@@ -11,15 +11,30 @@
         class ShopProduct
         {
             # Created its arguments
-            public $title = "default product";
-            public $producerMainName = "main name";
-            public $producerFirstName = "first name";
+            public $title;
+            public $producerMainName;
+            public $producerFirstName;
             public $price = 0;
+
+            # Added a constructor for the objects
+            public function __construct($title="", $firstName="", $mainName="", $price=0)
+            {
+                $this->title = $title;
+                $this->producerFirstName = $firstName;
+                $this->producerMainName = $mainName;
+                $this->price = $price;
+            }
+
+            # Added a get method for the producer's first and main name
+            public function getProducer()
+            {
+                return "$this->producerFirstName $this->producerMainName <br>";
+            }
         }
 
-        # Created two ShopProduct objects
-        $product1 = new ShopProduct();
-        $product2 = new ShopProduct();
+        # Created two ShopProduct objects, whose values are created through the constructor
+        $product1 = new ShopProduct("","","",100);
+        $product2 = new ShopProduct("Another one", "John", "Cox", 150);
 
         # Showing the types of the objects, which is ShopProduct
         var_dump($product1);
@@ -36,6 +51,12 @@
         # We can also create new arguments outside the class itself, like this
         $product2->addedArgument = 10;
         echo "$product2->addedArgument <br>";
+
+        # Testing the getProducer() method. With the constructor initiated at the start, we can simply call $product2
+        $product1->producerFirstName = "Aldin1";
+        $product1->producerMainName = "Mekic1";
+        echo $product1->getProducer();
+        echo $product2->getProducer();
     ?>
 </body>
 </html>
