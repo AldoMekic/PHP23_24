@@ -10,7 +10,6 @@
         
         class ShopProduct
         {
-            # Made the arguments private
             private int $discount = 0;
             private $title;
             private $producerMainName;
@@ -25,7 +24,6 @@
                 $this->price = $price;
             }
 
-            # Created get and set methods for every argument
             public function getProducerFirstName(): string
             {
                 return $this->producerFirstName;
@@ -72,7 +70,6 @@
         
         class CdProduct extends ShopProduct
         {
-            # Privated playLenght
             private $playLength;
 
             
@@ -98,7 +95,6 @@
         
         class BookProduct extends ShopProduct
         {
-            # Privated numPages
             private $numPages;
 
             public function __construct(string $title,string $firstName,string $mainName,float $price, int $numPages)
@@ -120,23 +116,29 @@
             }
         }
 
-        class ShopProductWriter
+        # Turned the ShopProductWriter class into an abstract class
+        abstract class ShopProductWriter
         {
-            private $products = [];
+            protected array $products = [];
 
             public function addProduct(ShopProduct $shopProduct): void 
             {
                 $this->products[] = $shopProduct;
             }
 
+            abstract public function write(): void;
+        }
+
+        # Created the TextProductWriter class which inherits the abstract class ShopProductWriter
+        class TextProductWriter extends ShopProductWriter
+        {
             public function write(): void
             {
-                $str = "";
+                $str = "PRODUCTS: <br>";
                 foreach($this->products as $shopProduct)
                 {
-                    $str .= "{$shopProduct->getTitle()}: "; # Called the getTitle method so the writer can write out the products without an error
-                    $str .= $shopProduct->getProducer();
-                    $str .= "({$shopProduct->getPrice()}) <br>";
+                    $str .= $shopProduct->getSummaryLine();
+                    $str .= "<br>";
                 }
                 echo $str;
             }
@@ -156,7 +158,9 @@
         echo $product3->getPrice();
         echo "<br>";
 
-        $writer = new ShopProductWriter();
+        # Since an abstract class's methods cannot be implicitly called, we use the newly created TextProductWriter
+        # class to once again call the write method
+        $writer = new TextProductWriter();
         $writer->addProduct($product3);
         $writer->write();
     ?>
