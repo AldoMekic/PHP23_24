@@ -10,7 +10,8 @@
         
         class ShopProduct
         {
-            # Removed the numPages and playLength arguments from the parent class
+            # Added a discount, as well as made all the arguments protected
+            protected $discount = 0;
             public $title;
             public $producerMainName;
             public $producerFirstName;
@@ -25,10 +26,22 @@
                 $this->price = $price;
             }
 
+            # Added a set method for a discount
+            public function setDiscount(int $num):void
+            {
+                $this->discount = $num;
+            }
+
             
             public function getProducer(): string
             {
                 return "$this->producerFirstName $this->producerMainName ";
+            }
+
+            # Added a get method for the price that subtracts the given price with the discount
+            public function getPrice(): int
+            {
+                return ($this->price - $this->discount);
             }
 
             
@@ -43,11 +56,9 @@
         
         class CdProduct extends ShopProduct
         {
-            # Added the argument playLength
-            public $playLength;
+            protected $playLength;
 
-            # Created a CDProduct constructor that callls the parent constructor for the inherited arguments and then applies
-            # the CDProduct specific arguments independently
+            
             public function __construct(string $title,string $firstName,string $mainName,float $price, int $playLength)
             {
                 parent::__construct($title,$firstName,$mainName,$price);
@@ -62,7 +73,6 @@
             
             public function getSummaryLine(): string
             {
-                # Invoked the overriden method
                 $base = parent::getSummaryLine();
                 $base .= ": playing time - {$this->playLength}";
                 return $base;
@@ -72,11 +82,10 @@
         
         class BookProduct extends ShopProduct
         {
-            # Added the argument numPages
-            public $numPages;
+            
+            protected $numPages;
 
-            # Created a BookProduct constructor that calls the parent constructor for the inherited arguments and then applies
-            # the BookProduct specific arguments independently
+            
             public function __construct(string $title,string $firstName,string $mainName,float $price, int $numPages)
             {
                 parent::__construct($title,$firstName,$mainName,$price);
@@ -91,7 +100,7 @@
             
             public function getSummaryLine(): string
             {
-                # Invoked the overriden method
+                
                 $base = parent::getSummaryLine();
                 $base .= ": number of pages - {$this->numPages}";
                 return $base;
@@ -100,10 +109,26 @@
 
         class ShopProductWriter
         {
-            public function write(ShopProduct $shopProduct)
+            # Added a private array of products
+            private $products = [];
+
+            # Added a method for adding ShopProduct objects to the products array
+            public function addProduct(ShopProduct $shopProduct): void 
             {
-                $str = $shopProduct->title . " : " . $shopProduct->getProducer() . "(" . $shopProduct->price . ") <br>";
-                return $str;
+                $this->products[] = $shopProduct;
+            }
+
+            # The write method shows information about every single ShopProduct
+            public function write(): void
+            {
+                $str = "";
+                foreach($this->products as $shopProduct)
+                {
+                    $str .= "{$shopProduct->title}: ";
+                    $str .= $shopProduct->getProducer();
+                    $str .= "({$shopProduct->getPrice()}) <br>";
+                }
+                echo $str;
             }
         }
 
@@ -115,6 +140,19 @@
         $product2 = new BookProduct("Book", "Aldin", "Mekic", 25.94, 55);
         echo "{$product2->getSummaryLine()} <br>";
         echo "number of pages: {$product2->getNumberOfPages()} <br>";
+
+        # Testing the discount and price methods
+        $product3 = new ShopProduct("Product", "First", "Product", 100);
+        $product3->setDiscount(15);
+        echo $product3->getPrice();
+        echo "<br>";
+
+        # Testing the writer object
+        $writer = new ShopProductWriter();
+        $writer->addProduct($product3);
+        $writer->write();
+        $writer->addProduct($product1);
+        $writer->write();
     ?>
 </body>
 </html>
