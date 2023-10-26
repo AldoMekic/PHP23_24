@@ -10,14 +10,13 @@
         
         class ShopProduct
         {
-            # Added a discount, as well as made all the arguments protected
-            protected $discount = 0;
-            public $title;
-            public $producerMainName;
-            public $producerFirstName;
-            public $price = 0;
+            # Made the arguments private
+            private int $discount = 0;
+            private $title;
+            private $producerMainName;
+            private $producerFirstName;
+            protected $price;
 
-           
             public function __construct(string $title,string $firstName,string $mainName,float $price)
             {
                 $this->title = $title;
@@ -26,24 +25,41 @@
                 $this->price = $price;
             }
 
-            # Added a set method for a discount
+            # Created get and set methods for every argument
+            public function getProducerFirstName(): string
+            {
+                return $this->producerFirstName;
+            }
+
+            public function getProducerMainName(): string
+            {
+                return $this->producerMainName;
+            }
+
             public function setDiscount(int $num):void
             {
                 $this->discount = $num;
             }
 
-            
-            public function getProducer(): string
+            public function getDiscount(): int
             {
-                return "$this->producerFirstName $this->producerMainName ";
+                return $this->discount;
             }
 
-            # Added a get method for the price that subtracts the given price with the discount
+            public function getTitle(): string
+            {
+                return $this->title;
+            }
+
             public function getPrice(): int
             {
                 return ($this->price - $this->discount);
             }
 
+            public function getProducer():string
+            {
+                return "$this->producerFirstName $this->producerMainName";
+            }
             
             public function getSummaryLine(): string
             {
@@ -56,7 +72,8 @@
         
         class CdProduct extends ShopProduct
         {
-            protected $playLength;
+            # Privated playLenght
+            private $playLength;
 
             
             public function __construct(string $title,string $firstName,string $mainName,float $price, int $playLength)
@@ -70,7 +87,6 @@
                 return $this->playLength;
             }
 
-            
             public function getSummaryLine(): string
             {
                 $base = parent::getSummaryLine();
@@ -82,10 +98,9 @@
         
         class BookProduct extends ShopProduct
         {
-            
-            protected $numPages;
+            # Privated numPages
+            private $numPages;
 
-            
             public function __construct(string $title,string $firstName,string $mainName,float $price, int $numPages)
             {
                 parent::__construct($title,$firstName,$mainName,$price);
@@ -97,10 +112,8 @@
                 return $this->numPages;
             }
 
-            
             public function getSummaryLine(): string
             {
-                
                 $base = parent::getSummaryLine();
                 $base .= ": number of pages - {$this->numPages}";
                 return $base;
@@ -109,22 +122,19 @@
 
         class ShopProductWriter
         {
-            # Added a private array of products
             private $products = [];
 
-            # Added a method for adding ShopProduct objects to the products array
             public function addProduct(ShopProduct $shopProduct): void 
             {
                 $this->products[] = $shopProduct;
             }
 
-            # The write method shows information about every single ShopProduct
             public function write(): void
             {
                 $str = "";
                 foreach($this->products as $shopProduct)
                 {
-                    $str .= "{$shopProduct->title}: ";
+                    $str .= "{$shopProduct->getTitle()}: "; # Called the getTitle method so the writer can write out the products without an error
                     $str .= $shopProduct->getProducer();
                     $str .= "({$shopProduct->getPrice()}) <br>";
                 }
@@ -141,17 +151,13 @@
         echo "{$product2->getSummaryLine()} <br>";
         echo "number of pages: {$product2->getNumberOfPages()} <br>";
 
-        # Testing the discount and price methods
         $product3 = new ShopProduct("Product", "First", "Product", 100);
         $product3->setDiscount(15);
         echo $product3->getPrice();
         echo "<br>";
 
-        # Testing the writer object
         $writer = new ShopProductWriter();
         $writer->addProduct($product3);
-        $writer->write();
-        $writer->addProduct($product1);
         $writer->write();
     ?>
 </body>
